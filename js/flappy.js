@@ -61,6 +61,48 @@ function ParDeBarreiras(altura, abertura, x) {
 }
 
 //testando
-const b = new ParDeBarreiras(700, 300, 400)
-document.querySelector('[wm-flappy]').appendChild(b.elemento)
+//const b = new ParDeBarreiras(700, 300, 400)
+//document.querySelector('[wm-flappy]').appendChild(b.elemento)
 //observação, o this aqui no js indica que o elemento pode ser visto fora do metodo
+
+function Barreiras(altura, largura, abertura, espaco, notificarPonto) {
+ //metodo construtor para instanciar as barreiras
+ //recebe como parametro: altura, largura, abertura entre as barreiras, o espaço entre as barreiras
+ //e uma função para notificar os ponto, essa função sera disparado quando uma barreira foi cruzada o centro
+ //e o ponto sera contabilizado
+
+    //estamos criando um array de pare de barreiras
+    this.pares = [
+        new ParDeBarreiras(altura, abertura, largura), //primeria barreira
+        new ParDeBarreiras(altura, abertura, largura + espaco), //segunda barreira
+        new ParDeBarreiras(altura, abertura, largura + espaco * 2), //terceira barreira
+        new ParDeBarreiras(altura, abertura, largura + espaco * 3) //quarta barreira
+    ]
+
+    const deslocamento = 3 //constante de deslocamento, isto é de quanto em quanto sera deslocado em px
+    this.animar = () => {
+    //função responsavel por fazer a animação do cenário 
+        this.pares.forEach(par => {
+            par.setX(par.getX() - deslocamento)
+
+            //quando elemento sair da area do jogo
+            if(par.getX() < -par.getLargura()) {
+                par.setX(par.getX() + espaco * this.pares.length) //calcula e passa a barreira para o final do jogo
+                par.sortearAbertura() //sorte uma nova abertura utilizando as mesmas barreiras
+            }
+
+            const meio = largura / 2 //costante, que armazena quando for cruzou o meio
+            const cruzouOMeio = par.getX() + deslocamento >= meio 
+                && par.getX() < meio //constante que identifica quando cruzou o meio, aqui ele valida pelo if 
+                //se cruzou o meio chama o metodo de notificar ponto
+        })
+    }
+}
+
+//testando
+const barreiras = new Barreiras(700, 1200, 200, 400)
+const areaDoJogo = document.querySelector('[wm-flappy]')
+barreiras.pares.forEach(par => areaDoJogo.appendChild(par.elemento))
+setInterval( () =>{
+  barreiras.animar()
+},20)
