@@ -95,14 +95,52 @@ function Barreiras(altura, largura, abertura, espaco, notificarPonto) {
             const cruzouOMeio = par.getX() + deslocamento >= meio 
                 && par.getX() < meio //constante que identifica quando cruzou o meio, aqui ele valida pelo if 
                 //se cruzou o meio chama o metodo de notificar ponto
-        })
+        })  
+        
     }
 }
 
+function Passaro(alturaJogo) {
+ //função para fazer a movimentação do passaro   
+    let voando = false //essa var verifica se o usuário apertou
+    //qualquer tecla e soltou
+
+    this.elemento = novoElemento('img', 'passaro') //criando o passaro
+    this.elemento.src = 'imgs/passaro.png' //pegando o caminho da imagem
+
+    this.getY = () => parseInt(this.elemento.style.bottom.split('px')[0]) //pega a posição y do passaro
+    this.setY = y => this.elemento.style.bottom = `${y}px` //seta o valor do passaro no eixo y
+
+    window.onkeydown = e => voando = true //quando o usuário pressionar uma tecla seta para true a variavel voando
+    window.onkeyup = e => voando = false //quando o usuário solta a tecla seta para false a variavel
+
+    this.animar = () => {
+    //metodo de animação do passaro    
+        const novoY = this.getY() + (voando ? 8 : -5) //calculo para fazer o passaro voar 
+        const alturaMaxima = alturaJogo - this.elemento.clientHeight //calculo para altura maxima que o passaro pode voar
+
+        //condição para manter o passaro voando, isto é não abaixa demais e não sobe demais
+        if(novoY <= 0) {
+            this.setY(0)
+        }
+        else if(novoY >= alturaMaxima) {
+            this.setY(alturaMaxima)
+        }
+        else {
+            this.setY(novoY)
+        }
+    }
+
+    this.setY(alturaJogo / 2)
+}
 //testando
-const barreiras = new Barreiras(700, 1200, 200, 400)
+const barreiras = new Barreiras(800, 1000, 400, 400)
+const passaro = new Passaro(700)
 const areaDoJogo = document.querySelector('[wm-flappy]')
+
+areaDoJogo.appendChild(passaro.elemento)
 barreiras.pares.forEach(par => areaDoJogo.appendChild(par.elemento))
 setInterval( () =>{
   barreiras.animar()
+  passaro.animar()
 },20)
