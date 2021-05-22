@@ -95,6 +95,7 @@ function Barreiras(altura, largura, abertura, espaco, notificarPonto) {
             const cruzouOMeio = par.getX() + deslocamento >= meio 
                 && par.getX() < meio //constante que identifica quando cruzou o meio, aqui ele valida pelo if 
                 //se cruzou o meio chama o metodo de notificar ponto
+                if(cruzouOMeio) notificarPonto() // se verdadeiro, conta um ponto    
         })  
         
     }
