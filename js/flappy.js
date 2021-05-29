@@ -144,6 +144,34 @@ function Progresso() {
     }
     this.atualizarPontos(0) //incialmente os pontos começa em 0
 }
+function GameOver() {
+    const msg = 'Game Over'
+    this.elemento = novoElemento('div','game-over')
+    this.elemento.innerHTML = msg
+}
+function estaoSobrePostos(elementoA, elementoB) {
+    const a = elementoA.getBoundingClientRect()
+    const b = elementoB.getBoundingClientRect()
+
+    const horizontal = a.left + a.width >= b.left && b.left + b.width >= a.left
+
+    const vertical = a.top + a.height >= b.top && b.top + b.height >= a.top
+
+    return horizontal && vertical
+}
+
+function colidiu (passaro, barreiras) {
+    let colidiu = false
+    barreiras.pares.forEach(parDeBarreiras =>{
+        if(!colidiu) {
+            const superior = parDeBarreiras.superior.elemento
+            const inferior = parDeBarreiras.inferior.elemento
+            colidiu = estaoSobrePostos(passaro.elemento, superior)
+            || estaoSobrePostos(passaro.elemento, inferior)
+        }
+    })
+    return colidiu
+}
 
 function FlappyBird() {
 //função que representa o jogo    
@@ -157,7 +185,7 @@ function FlappyBird() {
     const passaro = new Passaro(altura) //criando o passaro
     //criando as barreiras
     const barreiras = new Barreiras(altura, largura, 200, 400,() => progresso.atualizarPontos(++pontos))
-
+    const gameOver = new GameOver()
     //adicionando elementos na tela
     areaDoJogo.appendChild(progresso.elemento) 
     areaDoJogo.appendChild(passaro.elemento)
@@ -170,6 +198,11 @@ function FlappyBird() {
         const temporizador = setInterval(() => {
             barreiras.animar()
             passaro.animar()
+
+            if(colidiu(passaro, barreiras)) {
+                areaDoJogo.appendChild(gameOver.elemento) //mostra menssagem de game-over
+                clearInterval(temporizador)
+            }
         }, 20)
     }
 }

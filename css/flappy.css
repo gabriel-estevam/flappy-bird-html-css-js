@@ -66,3 +66,14 @@
     font-size: 70px;
     z-index: 100;
 }
+
+.game-over {
+    position: absolute;
+    font-family: Pixel;
+    font-size: 70px;  
+    color: #f77f00; 
+    text-align: center;
+    left: 400px;
+    top: 100px;
+    z-index: 100;
+}
